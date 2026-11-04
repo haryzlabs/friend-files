@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Friend Files</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Gabarito:wght@400;600;800&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: a single tabloid front page — red masthead band, one big "exclusive" story card, controls under it */
+:root {
+  --paper: #fff6d6;
+  --ink: #1d1712;
+  --muted: #6b5d4c;
+  --red: #e0261c;
+  --red-ink: #ffffff;
+  --yellow: #ffd93b;
+  --card: #fffdf4;
+  --line: #1d1712;
+  --shadow: #1d1712;
+  --display: "Bowlby One", "Impact", "Arial Black", sans-serif;
+  --body: "Gabarito", "Segoe UI", system-ui, sans-serif;
+  --mono: "Courier Prime", "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #17120e; --ink: #fbf1d4; --muted: #b8a88c; --red: #ff4536; --red-ink: #1a0f0c;
+    --yellow: #ffd022; --card: #231b15; --line: #fbf1d4; --shadow: #000000; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #17120e; --ink: #fbf1d4; --muted: #b8a88c; --red: #ff4536; --red-ink: #1a0f0c;
+  --yellow: #ffd022; --card: #231b15; --line: #fbf1d4; --shadow: #000000; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+  background-image: radial-gradient(color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1.2px);
+  background-size: 7px 7px;
+}
+
+.masthead {
+  background: var(--red);
+  color: var(--red-ink);
+  border-bottom: 4px solid var(--line);
+}
+.masthead-inner, main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.masthead-inner {
+  padding-block: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.masthead h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 9vw, 4.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.dateline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-top: 2px solid currentColor;
+  padding-top: 6px;
+  margin-top: 8px;
+}
+
+main {
+  padding-block: 28px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+label.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+#name {
+  flex: 1 1 240px;
+  min-width: 0;
+  font: 600 1.25rem var(--body);
+  padding: 14px 16px;
+  color: var(--ink);
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+#name::placeholder { color: var(--muted); font-weight: 400; }
+#name:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+
+button {
+  font: 800 1rem var(--body);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 14px 20px;
+  border: 3px solid var(--line);
+  background: var(--yellow);
+  color: #1d1712;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+button:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--shadow); }
+button:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+button:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+button.primary { background: var(--red); color: var(--red-ink); }
+button.ghost { background: var(--card); color: var(--ink); }
+
+.story {
+  position: relative;
+  background: var(--card);
+  border: 3px solid var(--line);
+  box-shadow: 8px 8px 0 var(--shadow);
+  padding: 26px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.stamp {
+  position: absolute;
+  top: -16px;
+  right: 14px;
+  background: var(--yellow);
+  color: #1d1712;
+  border: 3px solid var(--line);
+  font-family: var(--display);
+  font-size: 0.95rem;
+  padding: 2px 10px;
+  transform: rotate(4deg);
+}
+.kicker {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--red);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.kicker span + span::before { content: "■ "; }
+.subject {
+  font-family: var(--display);
+  font-size: clamp(1.9rem, 7vw, 3rem);
+  line-height: 1;
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.fact {
+  margin: 0;
+  font-size: clamp(1.2rem, 3.6vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.4;
+  max-width: 34ch;
+  max-width: 60ch;
+  overflow-wrap: anywhere;
+}
+.source {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+  padding-top: 10px;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.status { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); align-self: center; min-height: 1.2em; }
+
+.story.pop { animation: pop 0.45s cubic-bezier(.2,1.6,.4,1); }
+@keyframes pop {
+  0% { transform: scale(0.86) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.fineprint {
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 20; width: 100%; height: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .story.pop { animation: none; }
+  button { transition: none; }
+}
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <h1>The Friend Files</h1>
+    <div class="dateline">
+      <span id="today">Today's edition</span>
+      <span>100% unverified · 0% innocent</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <form id="form" autocomplete="off">
+    <label class="sr" for="name">Friend's name</label>
+    <input id="name" name="name" type="text" maxlength="40" placeholder="Type a friend's name…" required>
+    <button class="primary" type="submit">Reveal</button>
+  </form>
+
+  <article class="story" id="story" aria-live="polite">
+    <div class="stamp">EXCLUSIVE</div>
+    <div class="kicker"><span id="factno">Verified fact #0000</span><span id="kind">Breaking</span></div>
+    <h2 class="subject" id="subject">Sam</h2>
+    <p class="fact" id="fact"></p>
+    <div class="source" id="source"></div>
+    <div class="actions">
+      <button class="ghost" type="button" id="another">Another one</button>
+      <button class="ghost" type="button" id="copy">Copy</button>
+      <button type="button" id="sticker">Share sticker</button>
+      <span class="status" id="status" role="status"></span>
+    </div>
+  </article>
+
+  <p class="fineprint">Every name gets its own official first fact, so type the same name twice and the story holds up. All facts are made up by a random mash-up machine. Any resemblance to actual events should be reported to the authorities.</p>
+</main>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+  // ---------- Seeded randomness ----------
+  function hash(str) {
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 2654435761);
+      h2 = Math.imul(h2 ^ c, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h2 >>> 0) * 4096 + (h1 >>> 20);
+  }
+  function rng(seed) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ---------- Word lists ----------
+  const W = {
+    animal: ["goose", "raccoon", "possum", "seagull", "crow", "rat", "feral cat", "vulture", "badger", "pigeon", "hyena", "swan", "llama", "goat"],
+    object: ["an unlabelled urn", "a shovel and a bag of lime", "a ouija board", "a voodoo doll of their landlord", "a jar of teeth (not theirs)", "a burner phone", "the programme from their own funeral", "a framed restraining order", "a taxidermied hamster", "a box marked \"EVIDENCE\"", "a life insurance policy with someone else's name on it", "a rope \"for camping\"", "a lock of their ex's hair", "a body bag, folded neatly", "a casserole dish stolen from a wake"],
+    place: ["a funeral they weren't invited to", "the morgue", "a cemetery at 3am", "a hospice gift shop", "small claims court", "a cult compound", "a crime scene", "an open-casket viewing", "their own intervention", "a bankruptcy hearing", "A&E", "divorce mediation", "a child's birthday party they weren't invited to", "a reading of a will", "a parole hearing"],
+    feat: ["faked their own death to get out of a group chat", "gave a eulogy for someone who was still alive and in the room", "tried to claim a dead goldfish as a tax dependent", "got kicked out of grief counselling for heckling", "sold a kidney to buy concert tickets, then the concert got cancelled", "dug a hole in the back garden \"just to have one ready\"", "started a cult and was voted out of it", "told a six-year-old that the tooth fairy died in a house fire", "brought a casserole to a funeral and asked for the dish back before the burial", "tried to haunt a house while still alive", "bit a priest during an exorcism", "read their gran's will out loud at her 80th birthday", "pawned their own wedding ring during the reception", "called in sick to their own funeral rehearsal", "sued their own mother for emotional damages", "left a one-star review of a hospice", "pushed a mime down the stairs and claimed it was \"interactive theatre\"", "sold their gran's ashes online as \"artisan sand\"", "photobombed an open-casket viewing", "brought a plus-one to their own divorce hearing", "taught a parrot at a funeral home to scream \"HE DID IT\""],
+    result: ["and was never seen again (for about twenty minutes)", "and the police are \"still looking into it\"", "and therapy hasn't helped", "and has a restraining order to show for it", "and the family hasn't spoken to them since", "and it's now a cautionary tale in three counties", "and the jury was \"deeply split\"", "and the priest has refused to comment", "and got away with it", "and would absolutely do it again", "and their mother has never recovered", "and that's why there's a lawsuit", "and the survivors still flinch at their name", "and the police have opened a file", "and has been on a watchlist ever since", "and their name is now a swear word in two languages"],
+    skill: ["can smell fear, and it's always their own", "can tell how long someone has left just by looking at them, and won't say", "can cry on command, which has been very useful in court", "can hold a grudge longer than most people live", "can smile through any funeral, including the ones they caused", "can talk their way out of a speeding ticket by describing their childhood", "has outlived three goldfish, two marriages and a life coach", "can dig a six-foot hole in under an hour, and nobody has asked why", "can make any baby cry just by making eye contact", "can sense when a will is about to be read"],
+    title: ["Most Likely To Appear On A True Crime Podcast", "Least Favourite Grandchild", "Prime Suspect", "Regional Champion of Emotional Damage", "Family Disappointment (three years running)", "Patron Saint of Bad Decisions", "Chief Executive of Unresolved Trauma", "Person Most Likely To Be Found In A Lake", "Undefeated Grudge-Holder of the Decade", "Reason the Family Moved Abroad", "Leading Cause of Death Among Their Houseplants"],
+    holder: ["their own therapist", "an off-duty police officer", "a jury of their peers", "the family group chat, unanimously", "a medium speaking on behalf of their dead grandad", "Interpol", "the ghost that lives in their attic", "a parole board that just wanted to go home"],
+    job: ["a professional mourner", "a crash test dummy", "a getaway driver for a care home", "a body double for a man in witness protection", "a clown who only works funerals", "a grief counsellor with no qualifications", "a ghostwriter for ransom notes", "a hitman, but only for houseplants", "the person who tells kids their hamster \"went to a farm\""],
+    fear: ["dying alone, which their therapist calls \"statistically likely\"", "their own reflection after 2am", "the life insurance policy their partner just took out", "their family finding their search history after they die", "nobody turning up to their funeral", "the thing in the basement, which they put there", "being remembered accurately"],
+    food: ["leftovers from a funeral buffet", "communion wafers they stole", "cold beans over the sink while crying", "a whole cake meant for a wake", "expired milk, out of spite", "their feelings, mostly", "the last meal of a man on death row, recreated from memory"],
+    secret: ["has three headstones pre-ordered, just in case", "keeps a list of people they plan to outlive", "has already written their own eulogy, and it's forty pages long", "uses a fake name at funerals", "is legally dead in two countries", "has been in witness protection twice", "knows where the bodies are buried, because it's their garden", "has been talking to the same ghost for six years and the relationship is toxic", "has a burner phone just for arguing with their mum", "still hasn't told their family about the twin"],
+    unit: ["minutes", "hours", "days", "weeks", "consecutive funerals"],
+  };
+
+  const T = [
+    { k: "Breaking", t: "{N} once {feat} {result}." },
+    { k: "Breaking", t: "{N} once {feat} at {place} {result}." },
+    { k: "Talent", t: "{N} {skill}." },
+    { k: "Honours", t: "{N} has been voted {title}." },
+    { k: "Honours", t: "{N} was officially named {title} by {holder}." },
+    { k: "Career", t: "Before they were famous, {N} worked as {job} for {num} {unit}." },
+    { k: "Career", t: "{N} was once offered a job as {job}, and turned it down to follow their dream of being {job2}." },
+    { k: "Confession", t: "{N} {secret}." },
+    { k: "Confession", t: "{N} is secretly terrified of {fear}." },
+    { k: "Diet", t: "{N}'s favourite meal is {food}. Their doctor has stopped asking." },
+    { k: "Diet", t: "{N} once ate {food} at {place} {result}." },
+    { k: "Wildlife", t: "A {animal} once followed {N} home from {place}. Nobody has seen the {animal} since." },
+    { k: "Wildlife", t: "{N} has been in a blood feud with a {animal} since {year}. Only one of them will make it out." },
+    { k: "Wildlife", t: "{N} once ran over a {animal} and held a funeral bigger than their grandad's." },
+    { k: "Records", t: "{N} holds the unofficial record for carrying {object} around {place} for {num} {unit}." },
+    { k: "Records", t: "{N} once stared into the void for {num} {unit} straight. The void blinked first." },
+    { k: "History", t: "In {year}, {N} {feat} {result}." },
+    { k: "History", t: "{N} was declared legally dead in {year} and simply never corrected anyone." },
+    { k: "Science", t: "Studies show that {N} {skill}. The study's lead author has since gone missing." },
+    { k: "Science", t: "{N} is {pct}% more likely than the average person to be eaten by a {animal}." },
+    { k: "Property", t: "{N} legally owns {object}, currently on display at {place}." },
+    { k: "Property", t: "{N} keeps {object} in their wardrobe \"just in case\"." },
+    { k: "Travel", t: "{N} has been escorted out of {place} {num} times and keeps going back." },
+    { k: "Travel", t: "{N} was once removed from {place} for being too enthusiastic about {object}." },
+    { k: "Sport", t: "{N} lost a fist fight to a {animal}. The {animal} still has their wallet." },
+    { k: "Sport", t: "{N} trains every morning for the day they finally snap." },
+    { k: "Music", t: "{N} once played a {num}-minute kazoo solo at {place} {result}." },
+    { k: "Mystery", t: "Nobody knows why, but {N} always has {object} on them." },
+    { k: "Mystery", t: "Every time {N} walks into a room, a {animal} somewhere drops dead." },
+    { k: "Love", t: "{N}'s ex still sends them {object} every year on the anniversary of \"the incident\"." },
+    { k: "Love", t: "{N}'s last three relationships ended at {place}. Two of them ended in court." },
+    { k: "Family", t: "{N}'s parents still introduce them as \"our first attempt\"." },
+    { k: "Family", t: "{N} is the reason their parents' marriage counsellor quit the profession." },
+    { k: "Afterlife", t: "{N}'s will leaves everything to {object}. The family is contesting it." },
+    { k: "Afterlife", t: "{N} has already picked their funeral song, and it's the one from the ice cream van." },
+  ];
+
+  // Hand-written one-liners, mixed in about a third of the time
+  const H = [
+    { k: "Origins", t: "When {N} was born, the doctor slapped their mum." },
+    { k: "Origins", t: "{N}'s dad went out for milk in 2004. He came back a year later, took one look at {N}, and left again." },
+    { k: "Origins", t: "{N}'s parents had another kid just to have a backup. The backup is doing great." },
+    { k: "Origins", t: "{N}'s mum kept a baby book for every child. {N}'s is a ring binder labelled \"INCIDENTS\"." },
+    { k: "Origins", t: "{N}'s imaginary friend asked to be transferred to a different child." },
+    { k: "Family", t: "{N}'s family photo has been professionally edited to remove them. It's the family's favourite." },
+    { k: "Family", t: "{N}'s nan's last words were \"{N}, put that down.\"" },
+    { k: "Family", t: "{N}'s grandparents left them nothing in the will except a note that said \"We know what you did.\"" },
+    { k: "Family", t: "{N}'s ancestry test came back, and their ancestors have asked to be removed from the database." },
+    { k: "Childhood", t: "{N} was the only guest at their own birthday party. The clown left early, crying." },
+    { k: "Childhood", t: "{N} wrote to Santa when they were seven. Santa wrote back: \"No. And stop asking where your father is.\"" },
+    { k: "Wildlife", t: "{N}'s goldfish died of natural causes. The natural cause was being owned by {N}." },
+    { k: "Health", t: "{N}'s therapist now has a therapist. That therapist now has a lawyer." },
+    { k: "Health", t: "{N} donated their body to science. Science sent it back with a note." },
+    { k: "Health", t: "{N}'s organ donor card just says \"please don't\"." },
+    { k: "Health", t: "{N}'s life flashed before their eyes once. It was so boring they fell asleep, which is how they survived." },
+    { k: "Afterlife", t: "{N} once had a near-death experience. The light at the end of the tunnel switched off when it saw who it was." },
+    { k: "Afterlife", t: "The Grim Reaper came for {N} once, got a puncture on the way, and has held a grudge ever since." },
+    { k: "Afterlife", t: "{N}'s guardian angel quit in 2011 and now works in a call centre. It says the hours are better." },
+    { k: "Afterlife", t: "{N} has already planned their funeral. The dress code is \"relieved\"." },
+    { k: "Afterlife", t: "{N}'s headstone has been engraved in advance. It reads: \"Well, that tracks.\"" },
+    { k: "Afterlife", t: "{N} goes to so many funerals that the undertaker gave them a loyalty card. One more stamp and theirs is free." },
+    { k: "Mystery", t: "{N} once asked a fortune teller about their future. She gave them a refund and a hug." },
+    { k: "Mystery", t: "The last time {N} said \"what's the worst that could happen?\", three fire engines answered." },
+    { k: "Love", t: "{N}'s ex didn't just block their number. They moved countries and changed their face." },
+    { k: "Career", t: "{N}'s last employer didn't fire them. They closed the company and started again under a new name." },
+  ];
+
+  const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+
+  function makeFact(name, n) {
+    const key = name.trim().toLowerCase().replace(/\s+/g, " ");
+    const r = rng(hash(key + "#" + n));
+    const tpl = r() < 0.35 ? pick(r, H) : pick(r, T);
+    const job = pick(r, W.job);
+    let job2 = pick(r, W.job);
+    if (job2 === job) job2 = W.job[(W.job.indexOf(job) + 1) % W.job.length];
+    const fills = {
+      N: name.trim(),
+      feat: pick(r, W.feat), result: pick(r, W.result), skill: pick(r, W.skill),
+      title: pick(r, W.title), holder: pick(r, W.holder), job, job2,
+      secret: pick(r, W.secret), fear: pick(r, W.fear), food: pick(r, W.food),
+      animal: pick(r, W.animal), object: pick(r, W.object), place: pick(r, W.place),
+      unit: pick(r, W.unit), num: 2 + Math.floor(r() * 46),
+      year: 1997 + Math.floor(r() * 28), pct: 40 + Math.floor(r() * 560),
+    };
+    const text = tpl.t.replace(/\{(\w+)\}/g, (_, k) => fills[k] ?? "");
+    const factNo = 1000 + Math.floor(r() * 9000);
+    const sources = ["Source: the police", "Source: a leaked police report", "Source: their therapist, who broke confidentiality for this", "Source: a ouija board", "Source: their nan, from beyond the grave", "Source: a true crime podcast (episode pending)", "Source: the group chat, probably", "Fact-checked by: nobody still alive"];
+    return { kind: tpl.k, text, factNo, source: pick(r, sources) };
+  }
+
+  // ---------- UI ----------
+  const $ = (id) => document.getElementById(id);
+  const story = $("story"), input = $("name"), status = $("status");
+  let current = { name: "Sam", n: 0 };
+
+  try {
+    $("today").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  } catch (e) {}
+
+  function render(animate) {
+    const f = makeFact(current.name, current.n);
+    $("subject").textContent = current.name.trim();
+    $("fact").textContent = f.text;
+    $("kind").textContent = f.kind;
+    $("factno").textContent = "Verified fact #" + f.factNo;
+    $("source").textContent = f.source + (current.n > 0 ? " · bonus fact " + current.n : "");
+    status.textContent = "";
+    if (animate) {
+      story.classList.remove("pop");
+      void story.offsetWidth;
+      story.classList.add("pop");
+      confetti();
+    }
+  }
+
+  $("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = input.value.trim();
+    if (!v) { status.textContent = "Type a name first."; input.focus(); return; }
+    current = { name: v, n: 0 };
+    render(true);
+  });
+
+  $("another").addEventListener("click", () => {
+    current.n += 1;
+    render(true);
+  });
+
+  $("copy").addEventListener("click", () => {
+    const text = $("fact").textContent;
+    const done = () => { status.textContent = "Copied. Go cause trouble."; };
+    const fallback = () => {
+      const range = document.createRange();
+      range.selectNodeContents($("fact"));
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
+      status.textContent = "Selected. Press Ctrl+C to copy.";
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  // ---------- Sticker ----------
+  // Draws the current story as a tilted, die-cut-style PNG with a transparent background.
+  const FD = '"Bowlby One", Impact, "Arial Black", sans-serif';
+  const FB = '"Gabarito", "Segoe UI", system-ui, sans-serif';
+  const FM = '"Courier Prime", "Courier New", monospace';
+  const C = { ink: "#1d1712", muted: "#6b5d4c", red: "#e0261c", yellow: "#ffd93b", card: "#fffdf4", white: "#ffffff" };
+
+  function wrap(x, text, max) {
+    const lines = [];
+    let line = "";
+    for (const word of text.split(/\s+/)) {
+      let w = word;
+      // Break words that are wider than the line on their own
+      while (x.measureText(w).width > max) {
+        let i = w.length - 1;
+        while (i > 1 && x.measureText(w.slice(0, i)).width > max) i--;
+        if (line) { lines.push(line); line = ""; }
+        lines.push(w.slice(0, i));
+        w = w.slice(i);
+      }
+      const test = line ? line + " " + w : w;
+      if (x.measureText(test).width > max && line) { lines.push(line); line = w; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function rrect(x, X, Y, w, h, r) {
+    x.beginPath();
+    x.moveTo(X + r, Y);
+    x.arcTo(X + w, Y, X + w, Y + h, r);
+    x.arcTo(X + w, Y + h, X, Y + h, r);
+    x.arcTo(X, Y + h, X, Y, r);
+    x.arcTo(X, Y, X + w, Y, r);
+    x.closePath();
+  }
+
+  async function makeSticker() {
+    try {
+      await Promise.all([
+        document.fonts.load('104px "Bowlby One"'),
+        document.fonts.load('600 50px "Gabarito"'),
+        document.fonts.load('700 28px "Courier Prime"'),
+        document.fonts.load('28px "Courier Prime"'),
+      ]);
+    } catch (e) {}
+
+    const f = makeFact(current.name, current.n);
+    const name = current.name.trim();
+    const W = 1080, M = 70, B = 22, P = 56, BAND = 130;
+    const CW = W - 2 * M - 2 * B, TW = CW - 2 * P;
+    const c = document.createElement("canvas");
+    const x = c.getContext("2d");
+
+    // Measure: shrink the name until its longest word fits
+    let ns = 104;
+    const longest = name.split(/\s+/).reduce((a, b) => (b.length > a.length ? b : a), "");
+    x.font = `${ns}px ${FD}`;
+    while (ns > 36 && x.measureText(longest).width > TW) { ns -= 4; x.font = `${ns}px ${FD}`; }
+    const nameLines = wrap(x, name, TW);
+    const FS = 50, FLH = Math.round(FS * 1.32);
+    x.font = `600 ${FS}px ${FB}`;
+    const factLines = wrap(x, f.text, TW);
+    x.font = `28px ${FM}`;
+    const srcLines = wrap(x, f.source, TW);
+
+    const CH = BAND + 52 + 30 + 26 + nameLines.length * Math.round(ns * 1.08) + 30 + factLines.length * FLH + 30 + 26 + srcLines.length * 36 + P - 10;
+    const H = CH + 2 * B + 2 * M;
+    c.width = W; c.height = H;
+
+    // Tilt the whole sticker
+    x.translate(W / 2, H / 2); x.rotate(-0.045); x.translate(-W / 2, -H / 2);
+
+    // White die-cut backing with a soft shadow
+    x.save();
+    x.shadowColor = "rgba(0,0,0,0.35)"; x.shadowBlur = 34; x.shadowOffsetY = 14;
+    rrect(x, M, M, W - 2 * M, H - 2 * M, 44); x.fillStyle = C.white; x.fill();
+    x.restore();
+
+    // Card
+    const cx = M + B, cy = M + B;
+    x.fillStyle = C.card; x.fillRect(cx, cy, CW, CH);
+    x.fillStyle = C.red; x.fillRect(cx, cy, CW, BAND);
+    x.fillStyle = C.ink; x.fillRect(cx, cy + BAND, CW, 6);
+    x.lineWidth = 6; x.strokeStyle = C.ink; x.strokeRect(cx + 3, cy + 3, CW - 6, CH - 6);
+
+    x.textBaseline = "alphabetic";
+    x.fillStyle = C.white; x.font = `56px ${FD}`;
+    x.fillText("THE FRIEND FILES", cx + P, cy + 84);
+
+    // EXCLUSIVE stamp across the band edge
+    x.save();
+    x.translate(cx + CW - 150, cy + BAND + 14); x.rotate(0.07);
+    x.fillStyle = C.yellow; x.fillRect(-125, -36, 250, 72);
+    x.lineWidth = 6; x.strokeRect(-125, -36, 250, 72);
+    x.fillStyle = C.ink; x.font = `40px ${FD}`; x.textAlign = "center"; x.textBaseline = "middle";
+    x.fillText("EXCLUSIVE", 0, 3);
+    x.restore();
+
+    let y = cy + BAND + 52 + 26;
+    x.fillStyle = C.red; x.font = `700 28px ${FM}`;
+    x.fillText(`VERIFIED FACT #${f.factNo}  ■  ${f.kind.toUpperCase()}`, cx + P, y);
+
+    y += 30;
+    x.fillStyle = C.ink; x.font = `${ns}px ${FD}`;
+    const NLH = Math.round(ns * 1.08);
+    for (const l of nameLines) { y += NLH; x.fillText(l, cx + P, y - NLH * 0.16); }
+
+    y += 30;
+    x.font = `600 ${FS}px ${FB}`;
+    for (const l of factLines) { y += FLH; x.fillText(l, cx + P, y - FLH * 0.25); }
+
+    y += 30;
+    x.save();
+    x.setLineDash([14, 10]); x.lineWidth = 3; x.strokeStyle = "rgba(29,23,18,0.4)";
+    x.beginPath(); x.moveTo(cx + P, y); x.lineTo(cx + CW - P, y); x.stroke();
+    x.restore();
+
+    y += 26;
+    x.fillStyle = C.muted; x.font = `28px ${FM}`;
+    for (const l of srcLines) { y += 36; x.fillText(l, cx + P, y - 8); }
+
+    return new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("toBlob failed"))), "image/png"));
+  }
+
+  $("sticker").addEventListener("click", async () => {
+    status.textContent = "Printing sticker…";
+    let blob;
+    try { blob = await makeSticker(); }
+    catch (e) { status.textContent = "Couldn't make the sticker, sorry."; return; }
+    const slug = current.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "friend";
+    const file = new File([blob], `${slug}-friend-file.png`, { type: "image/png" });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "The Friend Files" });
+        status.textContent = "Sent. No take-backs.";
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") { status.textContent = ""; return; }
+    }
+    // Fallback: download the PNG
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    status.textContent = "Sticker saved. Send it to the group chat.";
+  });
+
+  // ---------- Confetti ----------
+  const canvas = $("confetti"), ctx = canvas.getContext("2d");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let pieces = [], raf = 0;
+  function confetti() {
+    if (reduce) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const rect = story.getBoundingClientRect();
+    const cs = getComputedStyle(document.documentElement);
+    const colors = [cs.getPropertyValue("--red"), cs.getPropertyValue("--yellow"), "#2f7bff", "#21b36b", cs.getPropertyValue("--ink")];
+    for (let i = 0; i < 90; i++) {
+      pieces.push({
+        x: rect.left + rect.width / 2, y: rect.top + 30,
+        vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 12 - 4,
+        s: 5 + Math.random() * 6, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4,
+        c: colors[i % colors.length], life: 0,
+      });
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    pieces = pieces.filter((p) => p.life < 140 && p.y < innerHeight + 20);
+    for (const p of pieces) {
+      p.vy += 0.35; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+      ctx.restore();
+    }
+    raf = pieces.length ? requestAnimationFrame(tick) : 0;
+    if (!raf) ctx.clearRect(0, 0, innerWidth, innerHeight);
+  }
+
+  render(false);
+})();
+</script>
