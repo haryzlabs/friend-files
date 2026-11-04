@@ -409,9 +409,50 @@ button.ghost { background: var(--card); color: var(--ink); }
 
   const SOURCES = ["Source: the police", "Source: a leaked police report", "Source: their therapist, who broke confidentiality for this", "Source: a ouija board", "Source: their nan, from beyond the grave", "Source: a true crime podcast (episode pending)", "Source: the group chat, probably", "Fact-checked by: nobody still alive", "Source: a witness who has since moved abroad", "Source: the family, who would like it on the record"];
 
+  // The creator's names get brag facts only
+  const BRAG_NAMES = new Set(["hareez", "haryz", "hary"]);
+  const BRAG = [
+    { k: "Legend", t: "{N} once walked into a room and three people spontaneously got promoted." },
+    { k: "Legend", t: "{N} doesn't use a GPS. Roads simply rearrange themselves to get {N} there on time." },
+    { k: "Legend", t: "{N} has never lost an argument. People just eventually realise {N} was right all along." },
+    { k: "Legend", t: "When {N} was born, the doctor asked for an autograph." },
+    { k: "Legend", t: "{N}'s baby photos are currently on display in a gallery in Paris. There's a queue." },
+    { k: "Talent", t: "{N} can code an entire website before their tea goes cold, and it still works on Internet Explorer." },
+    { k: "Talent", t: "{N} once fixed a bug just by reading the error message out loud. The bug apologised." },
+    { k: "Talent", t: "{N} built this entire website. Please stand." },
+    { k: "Talent", t: "{N} can parallel park a bus in one go, blindfolded, while giving a TED talk." },
+    { k: "Talent", t: "{N} learned to play the piano in an afternoon, got bored, and invented a better instrument." },
+    { k: "Honours", t: "{N} has been voted Best Person Alive for {years} years running. The other nominees didn't bother turning up." },
+    { k: "Honours", t: "{N} was offered a knighthood and politely asked if there was anything higher." },
+    { k: "Honours", t: "There's a statue of {N} in a town {N} has never even visited. They just heard about {N}." },
+    { k: "Honours", t: "{N}'s name is in the dictionary. The definition is \"see: excellence\"." },
+    { k: "Science", t: "Scientists studied {N}'s brain and immediately had to buy bigger computers." },
+    { k: "Science", t: "{N}'s IQ test came back as \"yes\"." },
+    { k: "Science", t: "NASA once called {N} for advice. {N} was busy, so NASA waited." },
+    { k: "Sport", t: "{N} entered a marathon just to support a friend, finished first, then ran back to cheer them on." },
+    { k: "Sport", t: "{N} once beat a professional footballer at penalties using their weaker foot. Out of kindness." },
+    { k: "Wildlife", t: "Dogs wag their tails when {N} walks past. So do cats, which has confused vets." },
+    { k: "Wildlife", t: "A pigeon once delivered a thank-you note to {N}. Nobody knows what {N} did, but the pigeon was very sincere." },
+    { k: "Love", t: "{N} has never been dumped. Several people have tried, but they changed their minds halfway through the sentence." },
+    { k: "Love", t: "{N}'s exes all still send birthday cards. Signed \"with gratitude\"." },
+    { k: "Style", t: "{N} once wore socks with sandals and it became fashion week's main trend." },
+    { k: "Style", t: "Mirrors take a moment to compose themselves before reflecting {N}." },
+    { k: "Money", t: "{N} once found a fiver in an old coat. It was the coat's way of saying thank you." },
+    { k: "Mystery", t: "Every group chat goes quiet for a second when {N} starts typing. Out of respect." },
+    { k: "Mystery", t: "Nobody has ever seen {N} have a bad hair day. Experts believe it's not possible." },
+    { k: "Mystery", t: "Every joke on this website is about other people, because nobody could find anything bad to say about {N}." },
+    { k: "History", t: "Historians now agree that the 21st century will be remembered as \"the {N} era\"." },
+  ];
+  const BRAG_SOURCES = ["Source: literally everyone", "Source: an independent panel of fans", "Source: NASA", "Source: their mum, who is never wrong", "Fact-checked by: the universe, and it checks out", "Source: a peer-reviewed study of pure greatness", "Source: the history books (forthcoming)"];
+
   function makeFact(name, n) {
     const key = name.trim().toLowerCase().replace(/\s+/g, " ");
     const r = rng(hash(key + "#" + n));
+    if (BRAG_NAMES.has(key)) {
+      const b = deal(key, "brag", BRAG, n);
+      const text = b.t.replace(/\{N\}/g, name.trim()).replace("{years}", 3 + Math.floor(r() * 20));
+      return { kind: b.k, text, factNo: 1000 + Math.floor(r() * 9000), source: deal(key, "bragsrc", BRAG_SOURCES, n) };
+    }
     const tpl = deal(key, "tpl", ALL, n);
     const d = (k) => deal(key, k, W[k], n);
     const job = d("job");
