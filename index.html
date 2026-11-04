@@ -295,6 +295,11 @@ button.ghost { background: var(--card); color: var(--ink); }
   };
 
   const T = [
+    { k: "Multiverse", t: "In {pct} out of every 1,000 universes, {N} is {job}. In the rest, they're {object}." },
+    { k: "Outrage", t: "{N}'s complaint about {object} at {place} spiralled into a {num}-day national crisis." },
+    { k: "Outrage", t: "After {N} {cringe}, the government set up an inquiry. It has so far cost £{num} million." },
+    { k: "Space", t: "Aliens studied {N} for {num} {unit} and concluded humanity should be left alone, \"for our own sake\"." },
+    { k: "One-liner", t: "{N} says animals love them. A {animal} once ran into traffic to get away from them." },
     { k: "Career", t: "{N} was fired from being {job} for {reason}." },
     { k: "Social", t: "{N} was removed from {group} for {reason}." },
     { k: "Social", t: "{N} has been kicked out of {group} {num} times. They keep coming back in a fake moustache." },
@@ -344,6 +349,56 @@ button.ghost { background: var(--card); color: var(--ink); }
 
   // Hand-written one-liners, shuffled into the same deck as the templates
   const H = [
+    // Deadpan one-liners with a twist
+    { k: "One-liner", t: "{N} told their dad they wanted to be a comedian. He laughed. It was the first time, and the last time." },
+    { k: "One-liner", t: "{N} likes to say there's no \"I\" in team. There's also no \"{N}\" in team, and the team voted to keep it that way." },
+    { k: "One-liner", t: "{N} says they'll try anything once. Their parents said the same thing, and look how that turned out." },
+    { k: "One-liner", t: "{N} has been told they light up a room. By the fire brigade. Twice." },
+    { k: "One-liner", t: "{N} describes themselves as \"an acquired taste\". Nobody has acquired it." },
+    { k: "One-liner", t: "{N} once had a near-perfect relationship. Then the other person found out about it." },
+    { k: "One-liner", t: "{N}'s teachers always said they'd go far. They were at the airport at the time, waving them off with visible relief." },
+    { k: "One-liner", t: "{N} isn't lazy. They're in energy-saving mode, and have been since birth." },
+    { k: "One-liner", t: "{N} is someone's best friend. They just haven't found out whose yet, and neither has the other person." },
+    { k: "One-liner", t: "{N} isn't a morning person. Or an afternoon person. Experts are still checking the evening." },
+    { k: "One-liner", t: "{N} calls themselves \"brutally honest\". Their friends agree they've nailed the brutal part." },
+    { k: "One-liner", t: "{N} says what doesn't kill you makes you stronger. {N} has been through a lot and is still very weak." },
+    { k: "One-liner", t: "{N} is great with kids. They've never once lost an argument with one." },
+    { k: "One-liner", t: "{N}'s parents said they'd love them no matter what. Then {N} happened, and their lawyer found a loophole." },
+    { k: "One-liner", t: "{N} always says \"it is what it is\". In {N}'s case, it really is, and nobody's happy about it." },
+
+    // Nihilist sci-fi
+    { k: "Multiverse", t: "In an infinite multiverse, there must be a universe where {N} is cool. Scientists checked. There isn't." },
+    { k: "Multiverse", t: "Somewhere in the multiverse is a version of {N} who has their life together. It's a lamp." },
+    { k: "Multiverse", t: "Every version of {N} across every reality has the exact same personality. The multiverse has filed a complaint." },
+    { k: "Multiverse", t: "{N} is the only {N} left in the multiverse. The others were recalled for safety reasons." },
+    { k: "Space", t: "Aliens visited Earth once, scanned {N}, and quietly reversed out of the solar system." },
+    { k: "Space", t: "{N} was abducted by aliens in {year}. They were returned the same night with a note saying \"no thank you\"." },
+    { k: "Science", t: "{N}'s life is a simulation. The person running it went to make a cup of tea in 2009 and never came back." },
+    { k: "Science", t: "Scientists gave a simulated {N} infinite chances to get life right. It ran out of chances." },
+    { k: "Science", t: "{N} discovered the meaning of life. It was a typo." },
+    { k: "Science", t: "{N} was cloned in a lab once. The clone left a one-star review and moved out." },
+    { k: "Science", t: "{N} travelled back in time to fix their biggest mistake, and accidentally became it." },
+    { k: "Science", t: "There's a tiny civilisation living in {N}'s car battery. They've just voted to replace {N}." },
+    { k: "Space", t: "The universe is cold, empty and indifferent, and even it has muted {N}." },
+    { k: "Space", t: "{N} tried escaping their problems by moving to another dimension. Their problems got there first and changed the locks." },
+    { k: "Science", t: "{N}'s existential crisis is having an existential crisis about being stuck in {N}." },
+
+    // Small-town satire and outrage spirals
+    { k: "Outrage", t: "{N} once got so offended by a menu that the restaurant issued a public apology, closed down and moved to another country." },
+    { k: "Outrage", t: "The town council called an emergency meeting about {N}. That meeting is still going." },
+    { k: "Outrage", t: "{N} started a protest about a headline they didn't read past. It now has a logo, a hashtag and a merch line." },
+    { k: "Outrage", t: "{N} accidentally started a moral panic at a parents' evening. Three schools have now banned yoghurt." },
+    { k: "Outrage", t: "{N} once asked to speak to the manager's manager's manager. That person now lives in a cave and won't come out." },
+    { k: "Outrage", t: "{N}'s neighbours started a support group for people who live near {N}. It's now a national charity with a telethon." },
+    { k: "Outrage", t: "One \"quick\" post from {N} led to a two-year neighbourhood feud, a court case and a documentary." },
+    { k: "Outrage", t: "{N} sued a talking toy for emotional damages. The toy won, and got costs." },
+    { k: "Outrage", t: "{N} was an influencer for one afternoon and somehow got a whole town to boycott Tuesdays." },
+    { k: "Outrage", t: "The news ran a special report on {N}. It was called \"Why?\"." },
+    { k: "Outrage", t: "{N} tried to cancel a celebrity online and accidentally cancelled their own nan." },
+    { k: "Outrage", t: "{N} has been declared a national emergency in two small countries." },
+    { k: "Outrage", t: "{N}'s school had to invent a new kind of detention just for them. It's a room with their mum in it." },
+    { k: "Outrage", t: "{N} is taking the concept of Mondays to court. It's now going to a higher court." },
+    { k: "Outrage", t: "{N}'s parents went on daytime TV to ask for advice. The host said \"oh no\" and went straight to an ad break." },
     { k: "Social", t: "{N}'s phone has a Do Not Disturb mode. It has never once been necessary." },
     { k: "Social", t: "{N} threw themselves a surprise party. Nobody came, but it was still a surprise." },
     { k: "Social", t: "{N} once got left on read by an automated message." },
